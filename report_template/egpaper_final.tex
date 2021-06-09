@@ -39,7 +39,7 @@ Massimiliano Conte\\
 %\thispagestyle{empty}
 \begin{abstract}
 
-This paper aims to investigate which is the best approach for crowd counting in a simple situation, among different computer vision tecniques. The counting is performed on images captured from a security camera placed in a shopping mall. In this simple but useful task the goal is to estimate the number of people that are present in the image. We can for example count the percentage of visitors who buyed from a specific shop or report to the mall staff that covid-19 social distancing laws are not respected.
+This paper aims to investigate which is the best approach for crowd counting in a simple situation, among different computer vision tecniques. The counting is performed on images captured from a security camera placed in a shopping mall. In this simple but useful task the goal is to estimate the number of people that are present in the image. We can for example count the percentage of visitors who buyed from a specific shop or report to the mall staff that covid-19 social distancing laws are not respected. ttt
 
 \end{abstract}
 
@@ -53,11 +53,23 @@ There were developed a lot of different tecniques for solving this computer visi
 %------------------------------------------------------------------------
 \section{Related work}
 
-We based our project on informations contained in different papers about computer vision tasks and crowd counting. The first one is related to VGG16, the network we fine tuned for dealing with our people counting problem, and it is entitled “Very Deep Convolutional Networks for Large-Scale Image Recognition” [citepaper]. In this paper 
+We based our project on informations contained in different papers about computer vision tasks and crowd counting. The first one is related to VGG16, the network we fine tuned for dealing with our people counting problem, and it is entitled “\textit{Very Deep Convolutional Networks for Large-Scale Image Recognition}” \cite{simonyan2014very}. In this paper the authors investigate the effect of the convolutional network depth on its accuracy in the
+large-scale image recognition setting. In this convolutional neural networks they use very small (3x3) convolution filters, which shows that a significant improvement on the prior state of the art configurations. They also pushed the depth to 16-19 weight layers (Fig.\ref{fig:vgg16}). Those small convolutional filters can be useful in our application for finding people in images. Fine tuning the final layers and adding a regression one at the final part of the network, we hope that VGG16 model will achieve a good performance. 
 
- discuss published work or similar apps
-that relates to your project. How is your approach similar or
-different from others? 
+\begin{figure}[h!]
+  \includegraphics[width=\linewidth]{pics/vgg16.png}
+  \caption{VGG16 deep CNN structure}
+  \label{fig:vgg16}
+\end{figure}
+
+We relate also to two papers about density map crowd counting approach. The first one is entitled ”\textit{Single-Image Crowd Counting via Multi-Column Convolutional Neural Network}” \cite{zhang2016single}.
+
+\begin{figure}[h!]
+  \includegraphics[width=\linewidth]{pics/densitymapapproach.png}
+  \caption{Density map approach}
+  \label{fig:densitymap}
+\end{figure}
+
 
 
 
@@ -76,16 +88,7 @@ different from others?
 %------------------------------------------------------------------------
 \section{Formatting your paper}
 
-All text must be in a two-column format. The total allowable width of the
-text area is $6\frac78$ inches (17.5 cm) wide by $8\frac78$ inches (22.54
-cm) high. Columns are to be $3\frac14$ inches (8.25 cm) wide, with a
-$\frac{5}{16}$ inch (0.8 cm) space between them. The main title (on the
-first page) should begin 1.0 inch (2.54 cm) from the top edge of the
-page. The second and following pages should begin 1.0 inch (2.54 cm) from
-the top edge. On all pages, the bottom margin should be 1-1/8 inches (2.86
-cm) from the bottom edge of the page for $8.5 \times 11$-inch paper; for A4
-paper, approximately 1-5/8 inches (4.13 cm) from the bottom edge of the
-page.
+
 
 %-------------------------------------------------------------------------
 \subsection{Margins and page numbering}
