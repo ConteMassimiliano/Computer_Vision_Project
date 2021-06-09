@@ -1,2 +1,8 @@
 data/
+<<<<<<< HEAD
 trained_models/
+=======
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+trained_models
+>>>>>>> 8ce30e2dd32664b69c9a6c13aa7850b89da0e9c8

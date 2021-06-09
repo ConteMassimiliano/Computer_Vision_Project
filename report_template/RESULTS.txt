@@ -1,0 +1,8 @@
+MAEs										st-B	Webcam
+Csrnet fine tuned on shanghai-tech B half-frozen				40.17	14.34
+Csrnet fine tuned on shanghai-tech B unfrozen					28.35	12.63
+Csrnet fine tuned on shanghai-tech B unfrozen fine tuned on webcam		x	5.35
+Csrnet fine tuned on shanghai-tech B (unfrozen) as f estractor +
+	One dense layer +							x	2.48
+Csrnet fine tuned on shanghai-tech B (unfrozen) as f estractor +
+	One dense layer +							x	2.50
