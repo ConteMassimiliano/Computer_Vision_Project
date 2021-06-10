@@ -136,7 +136,7 @@ As suggested in \cite{zhang2016single}, we used $\beta = 0.3$.
 	\caption{An example of ground truth density estimation.}
 	\label{fig:DensityGT}
 \end{figure}
-\subsubsection{Overall procedure}
+\subsubsection{CSRnet training}
 Our goal is to use this model on the \textit{Mall dataset}, but we don't have annotation for those images. So we used \textit{Shanghai-Tech} Part B dataset in order to pretrain the model. The first step was to build the architecture as described in \cite{li2018csrnet}, in particular the one that performed the best in their experiments (Figure \ref{fig:CSRnet}). We froze all the \textit{VGG16} layers, with \textit{ImageNet} pretrained weights, and train the other layers using SGD as described in \cite{li2018csrnet}. Then we fine tuned the whole neural network by train it again having unfrozen all the parameters, so we let the \textit{VGG16} layers to adapt their filters in order to catch features that are more relevant for the crowd counting task. We checked the performance of the network by making predictions and evaluatng them using \textit{Mean Absolut Error}.
 \begin{equation}
 	\hat{y}^{(i)} = \sum_{x \in X^{(i)}}\hat{F}^{(i)}(x)
@@ -155,9 +155,18 @@ Since \textit{VGG16} has 3 max pooling layers (Figure \ref{fig:vgg16}), we built
 \end{figure}
 
 As we can see from Figure \ref{fig:DMpred}, the estimation of the density maps provided by the trained \textit{CSRnet} model seem reasonable.
-\\
+\subsubsection{More layers}
 Once we had the \textit{CSRnet} trained on \textit{Shanghai-Tech} Part B dataset we adapt this model to the \textit{Mall dataset} in order to let it exploit the static background and the fixed perspective. The first thing we have done is to fine tune the whole network on the \textit{Mall dataset}. After this, since the results were worst than the simpler approach, we decided to use the fine tuned \textit{CSRnet} as feature extractor and to build on top of it a regressor. So we froze all the \textit{CSRnet} weights and added some dense layers (we experimented different configurations that will be explained in the next section), and that we trained the regressor using adam. We could add dense layers since images on \textit{Mall dataset} have fixed size. 
 \section{Experiments}
+\subsection{Regression based approach}
+\subsection{Density based approach}
+\subsubsection{Shanghai Tech Part B}
+\subsubsection{Mall dataset}
+
+
+
+
+
 
 
 \printbibliography
