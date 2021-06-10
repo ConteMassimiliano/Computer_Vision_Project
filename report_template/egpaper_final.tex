@@ -61,30 +61,44 @@ Our idea is to compare two main tecniques in this fixed camera setting, one that
 %------------------------------------------------------------------------
 \section{Related work}
 
+\subsection{VGG net}
 We based our work on information contained in different papers about computer vision tasks and crowd counting. The first one is related to the base network of both approaches, the VGG16 net \cite{simonyan2014very}. In this paper the authors investigated the effect of a deeper (with respect to previous architectures) convolutional neural network on the classification accuracy in the
 large-scale image recognition setting, specifically on the \textit{imageNet} dataset \cite{deng2009imagenet}. In this convolutional neural networks they used very small (3x3) convolution filters, which have shown a significant improvement on the prior state of the art configurations. They also pushed the depth to 16-19 weight layers (Fig.\ref{fig:vgg16}). Those convolutional filters learned during \textit{imageNet} classification task can be useful in our application, giving a meaningful feature extraction for finding people in images.
 
 \begin{figure}[h!]
   \includegraphics[width=\linewidth]{pics/vgg16.png}
-  \caption{VGG16 deep CNN structure}
+  \caption{VGG16 deep CNN architecture.}
   \label{fig:vgg16}
 \end{figure}
 
-We relate also to two papers about density map crowd counting approach. In the first one \cite{zhang2016single} authors introduced a new large-scale crowd dataset named Shanghaitech. It contains nearly 1,200 images with around 330,000 accurately labeled heads. They also used Multi-column CNN for density map estimation (Fig.\ref{fig:densitymap}). We also relate to a more recent paper that simplifies the convolutional neural network of the previous work and achieves better results. This second paper about density map crowd couting approach \cite{li2018csrnet} uses a CSRNet architecture for capturing high-level features with
-larger receptive fields and generating high-quality density maps without expanding network complexity. 
+\subsection{Density based approach}
+The crowd counting based on density map estimation is a well known approach. One solution that is robust with respect to a variety of image properties is the \textit{Multi-Column Convolutional Neural Network (MCCNN)} \cite{zhang2016single}. The authors designed a system capable of detecting heads of different sizes, both in dense or sparse situations. Their work is first based on the generation of ground-truth density maps via geometry-adaptive kernels, for handling both dense and sparse images. Their architecture is designed in such a way that is able to detect heads of different sizes, in particular they built a neural network with three branches, one for head size, small, medium and large heads. For the training they pre trained separately each branch, and then the full network. The output of the network was designed and trained to be the estimation of the ground truth density maps. In order to train such a network, since are required ground truth density maps, a datatset with head annotations is a requisite, and for this reason they also introduced \textit{Shanghai-tech}, a new large scale crowd counting dataset. 
 
 \begin{figure}[h!]
-  \includegraphics[width=\linewidth]{pics/densitymapapproach.png}
-  \caption{Density map approach}
-  \label{fig:densitymap}
+	\includegraphics[width=\linewidth]{pics/MCCNN.png}
+	\caption{MCCNN architecture.}
+	\label{fig:MCCNN}
+\end{figure}
+
+
+ The models that we implemented are related to a more recent paper that simplifies the convolutional neural network of the previous work, by removing the multy-branch structure and going further with the deepness. They also experimented with the stride of convolutions, in an architecture they called \textit{CSRNet} \cite{li2018csrnet}. Designing a model which is automatically able to distinguish heads of different sizes achieved better results with respect to \textit{MCCNN}. This architecture is basically the \textit{VGG16} net (without the classifier), with other convolutional layers on top of it. For the training they fine tuned the network, starting from \textit{ImageNet} learned weights for the $VGG16$ part and random normal initialization for the others. Since those methods \cite{zhang2016single,li2018csrnet} don't use dense layers, they can work with images of any size.
+
+\begin{figure}[h!]
+	\includegraphics[width=0.5\columnwidth]{pics/CSRnet.png}
+	\centering
+	\caption{Best CSRnet architecture\\ numbers are: kernel size - \# of filters - stride.}
+	\centering
+	\label{fig:CSRnet}
 \end{figure}
 
 
 
 %------------------------------------------------------------------------
-\section{Dataset}
+\section{Datasets}
+\subsection{Mall dataset}
+\subsection{Shanghai tech dataset}
 
-
+jdbfjdbjfbfdbfsdjb
 
 \printbibliography
 
