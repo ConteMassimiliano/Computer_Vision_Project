@@ -7,9 +7,9 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage[
-backend=biber,
-%style=numeric,
-citestyle=numeric 
+natbib=true,
+style=numeric,
+sorting=none
 ]{biblatex}
 \addbibresource{egbib.bib}
 
@@ -55,14 +55,14 @@ In this work we compared different computer vision tecniques in order to estimat
 \section{Introduction}
 
 The crowd counting problem received a lot of attention in recent years, due to its direct connection with crowd control and public safety. For this reason many techniques were recently proposed.
-Our idea is to compare two main tecniques in this fixed camera setting, one that is fast to implement and the other one more challenging, in order to verify if it is worth it to spend time for a more sophisticated solution. The first approach is to direcly estimate the number of people performing regression with a convolutional neural network, such as the VGG16 network \cite{simonyan2014very}.  This very deep network was proposed by K. Simonyan and A. Zisserman from the University of Oxford and it was submitted to ImageNet challenge in 2014. The second approach deals with density maps. Those are useful in real life applications since the same number of people could have completely different crowd distributions. (as shown in Fig. 1). After implementing the two approaches on our problem we found that...
+Our idea is to compare two main tecniques in this fixed camera setting, one that is fast to implement and the other one more challenging, in order to verify if it is worth it to spend time for a more sophisticated solution. The first approach is to direcly estimate the number of people performing regression with a deep convolutional neural network, such as the VGG16 network \cite{simonyan2014very}. We chose this very deep network since it is easy to handle for our purposes, unlike more complex architectures that have, for example, skip layer connections, and also because it is the base for the second technique. The second approach performs an undirect estimate of the number of people. First it is estimated the density of people in the image, then starting from the obtained density map the count is inferred. This second approach represents the base idea for the state of the art methods in croud counting, where images could have a completely different number of people on  differents enviroment and perspective. After implementing the two approaches on our problem, we found that a simple regression based on neural networks could perform as good as density based approach, probably exploiting the fixed background.
 
 
 %------------------------------------------------------------------------
 \section{Related work}
 
-We based our project on informations contained in different papers about computer vision tasks and crowd counting. The first one is related to VGG16, the network we fine tuned for dealing with our people counting problem \cite{simonyan2014very}. In this paper the authors investigate the effect of the convolutional network depth on its accuracy in the
-large-scale image recognition setting. In this convolutional neural networks they use very small (3x3) convolution filters, which shows that a significant improvement on the prior state of the art configurations. They also pushed the depth to 16-19 weight layers (Fig.\ref{fig:vgg16}). Those small convolutional filters can be useful in our application for finding people in images. Fine tuning the final layers and adding a regression one at the final part of the network, we hope that VGG16 model will achieve a good performance. 
+We based our work on information contained in different papers about computer vision tasks and crowd counting. The first one is related to the base network of both approaches, the VGG16 net \cite{simonyan2014very}. In this paper the authors investigated the effect of a deeper (with respect to previous architectures) convolutional neural network on the classification accuracy in the
+large-scale image recognition setting, specifically on the \textit{imageNet} dataset \cite{deng2009imagenet}. In this convolutional neural networks they used very small (3x3) convolution filters, which have shown a significant improvement on the prior state of the art configurations. They also pushed the depth to 16-19 weight layers (Fig.\ref{fig:vgg16}). Those convolutional filters learned during \textit{imageNet} classification task can be useful in our application, giving a meaningful feature extraction for finding people in images.
 
 \begin{figure}[h!]
   \includegraphics[width=\linewidth]{pics/vgg16.png}
@@ -86,8 +86,7 @@ larger receptive fields and generating high-quality density maps without expandi
 
 
 
-
-
+\printbibliography
 
 %{\small
 %\bibliographystyle{ieee_fullname}
