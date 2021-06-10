@@ -13,6 +13,8 @@ sorting=none
 ]{biblatex}
 \addbibresource{egbib.bib}
 
+\usepackage{subfig}
+
 % Include other packages here, before hyperref.
 
 % If you comment hyperref and then uncomment it, you should delete
@@ -55,7 +57,7 @@ In this work we compared different computer vision tecniques in order to estimat
 \section{Introduction}
 
 The crowd counting problem received a lot of attention in recent years, due to its direct connection with crowd control and public safety. For this reason many techniques were recently proposed.
-Our idea is to compare two main tecniques in this fixed camera setting, one that is fast to implement and the other one more challenging, in order to verify if it is worth it to spend time for a more sophisticated solution. The first approach is to direcly estimate the number of people performing regression with a deep convolutional neural network, such as the VGG16 network \cite{simonyan2014very}. We chose this very deep network since it is easy to handle for our purposes, unlike more complex architectures that have, for example, skip layer connections, and also because it is the base for the second technique. The second approach performs an undirect estimate of the number of people. First it is estimated the density of people in the image, then starting from the obtained density map the count is inferred. This second approach represents the base idea for the state of the art methods in croud counting, where images could have a completely different number of people on  differents enviroment and perspective. After implementing the two approaches on our problem, we found that a simple regression based on neural networks could perform as good as density based approach, probably exploiting the fixed background.
+Our idea is to compare two main tecniques in this fixed camera setting, one that is fast to implement and the other one more challenging, in order to verify if it is worth it to spend time for a more sophisticated solution. The first approach is to direcly estimate the number of people performing regression with a deep convolutional neural network, such as the VGG16 network \cite{simonyan2014very}. We chose this very deep network since it is easy to handle for our purposes, unlike more complex architectures that have, for example, skip layer connections, and also because it is the base for the second technique. The second approach performs an undirect estimate of the number of people. First it is estimated the density of people in the image, then starting from the obtained density map the count is inferred. This second approach represents the base idea for the state of the art methods in croud counting, where images could have a completely different number of people on  differents enviroment and perspective. After implementing the two approaches on our problem, we found that a simple regression based on neural networks could perform as good as density based approach, probably exploiting the fixed background and because density estimation methods are well suited for dense datasets.
 
 
 %------------------------------------------------------------------------
@@ -86,19 +88,32 @@ The crowd counting based on density map estimation is a well known approach. One
 \begin{figure}[h!]
 	\includegraphics[width=0.5\columnwidth]{pics/CSRnet.png}
 	\centering
-	\caption{Best CSRnet architecture\\ numbers are: kernel size - \# of filters - stride.}
+	\caption{Best CSRnet  (kernel size - \# of filters - stride).}
 	\centering
 	\label{fig:CSRnet}
 \end{figure}
 
 
-
 %------------------------------------------------------------------------
+
 \section{Datasets}
 \subsection{Mall dataset}
 \subsection{Shanghai tech dataset}
+This dataset was introduced in the \textit{MCCNN} paper \cite{zhang2016single}. This is a large-scale crowd counting dataset  which contains 1198 annotated images, with
+a total of 330,165 people with centers of their heads annotated. It consists of two parts: there are 482 images in Part A which are randomly crawled from the Internet, and 716 images in Part B which are taken from the busy streets of metropolitan areas in Shanghai. The crowd density varies significantly between the two subsets, in particular the part A is extremely dense, while part B is sparser, but still a dense dataset. Both Part A and Part B are divided into training and testing: 300
+images of Part A are used for training and the remaining 182 images for testing, and 400 images of Part B are for training and 316 for testing. We used Part B because is similar to the \textit{mall dataset}, since it is sparser.
 
-jdbfjdbjfbfdbfsdjb
+
+\begin{figure}[h!]%
+	\centering
+	\subfloat[\centering An image from Part A.]{{\includegraphics[width=0.4\linewidth]{pics/ShanghaiA.jpg} }}%
+	\qquad
+	\subfloat[\centering An image from Part B.]{{\includegraphics[width=0.4\linewidth]{pics/ShanghaiB.jpg} }}%
+	\label{fig:Shanghai}%
+\end{figure}
+
+
+
 
 \printbibliography
 
