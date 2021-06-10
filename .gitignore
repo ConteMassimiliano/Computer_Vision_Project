@@ -2,3 +2,10 @@ data/
 trained_models/
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
+*.log
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+report_template/egpaper_final.synctex.gz
