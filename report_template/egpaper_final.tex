@@ -112,7 +112,52 @@ images of Part A are used for training and the remaining 182 images for testing,
 	\label{fig:Shanghai}%
 \end{figure}
 
+\section{Method}
+\subsection{Regression based approach}
+\subsection{Density based approach}
+\subsubsection{Ground truth generation}
+Since we want the model to estimate the crowd density, we need ground truth density maps in order to perform supervised learning. A density map is a single channel image with positive values associated to each pixel. The generation of this image involve the head annotations: for each labeled image we have the coordinates of each head in that image. We can see each annotation as a sparse matrix, whose dimensions are the same as the image, with all zeros but one entry equals to one, corresponding to the pixel in the center of the head. As it is done in \cite{zhang2016single}, we used geometry-adaptive kernels. The density map $F$ is obtained via the following formula: \begin{equation}
+	F(x) = \sum_{i = 1}^{N}{\delta(x-x_i) * G_{\sigma_i}(x)} \text{ with } \sigma_i = \beta \bar{d^i}
+\end{equation}
+Where:
+\begin{itemize}
+	\item $x$ represent a given pixel coordinates;
+	\item $N$ is the number of annotated heads;
+	\item $x_i$ is the $i$-th annotated head pixel coordinates;
+	\item $\delta(\cdot)$ is the discrete version of the delta function: this function is zero on all possible points but in zero. In our case $\delta(0) = 1$ (in general we would have $\delta(0) = +\infty$ s.t. $\int_{Domain(x)}\delta(x)d(x) = 1$);
+	\item $*$ is the convolution operator;
+	\item $G_{\sigma}$ is the 2-d gaussian filter;
+	\item $\bar{d^i}$  is the mean euclidean distance between $x_i$ and $k$ neightbors.
+\end{itemize}   
+As suggested in \cite{zhang2016single}, we used $\beta = 0.3$.
 
+\begin{figure}[h!]
+	\includegraphics[width=\linewidth]{pics/DensityGT.png}
+	\caption{An example of ground truth density estimation.}
+	\label{fig:DensityGT}
+\end{figure}
+\subsubsection{Overall procedure}
+Our goal is to use this model on the \textit{Mall dataset}, but we don't have annotation for those images. So we used \textit{Shanghai-Tech} Part B dataset in order to pretrain the model. The first step was to build the architecture as described in \cite{li2018csrnet}, in particular the one that performed the best in their experiments (Figure \ref{fig:CSRnet}). We froze all the \textit{VGG16} layers, with \textit{ImageNet} pretrained weights, and train the other layers using SGD as described in \cite{li2018csrnet}. Then we fine tuned the whole neural network by train it again having unfrozen all the parameters, so we let the \textit{VGG16} layers to adapt their filters in order to catch features that are more relevant for the crowd counting task. We checked the performance of the network by making predictions and evaluatng them using \textit{Mean Absolut Error}.
+\begin{equation}
+	\hat{y}^{(i)} = \sum_{x \in X^{(i)}}\hat{F}^{(i)}(x)
+\end{equation}
+Basically the prediction is the sum over each pixel of the estimated density map.
+\begin{equation}
+	MAE = \frac{1}{m}  \sum_{i = 1}^{m} |\hat{y}^{(i)} - y^{(i)}|
+\end{equation}
+Since \textit{VGG16} has 3 max pooling layers (Figure \ref{fig:vgg16}), we built the ground truth density maps such that its dimension would be $1/8$ of the original images, in order to make the predictions match the ground truth values.
+
+
+\begin{figure}[h!]
+	\includegraphics[width=\linewidth]{pics/DMpred.png}
+	\caption{Test images, GT and CRSnet estimated density}
+	\label{fig:DMpred}
+\end{figure}
+
+As we can see from Figure \ref{fig:DMpred}, the estimation of the density maps provided by the trained \textit{CSRnet} model seem reasonable.
+\\
+Once we had the \textit{CSRnet} trained on \textit{Shanghai-Tech} Part B dataset we adapt this model to the \textit{Mall dataset} in order to let it exploit the static background and the fixed perspective. The first thing we have done is to fine tune the whole network on the \textit{Mall dataset}. After this, since the results were worst than the simpler approach, we decided to use the fine tuned \textit{CSRnet} as feature extractor and to build on top of it a regressor. So we froze all the \textit{CSRnet} weights and added some dense layers (we experimented different configurations that will be explained in the next section), and that we trained the regressor using adam. We could add dense layers since images on \textit{Mall dataset} have fixed size. 
+\section{Experiments}
 
 
 \printbibliography
