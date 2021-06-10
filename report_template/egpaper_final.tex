@@ -6,6 +6,12 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage[
+backend=biber,
+%style=numeric,
+citestyle=numeric 
+]{biblatex}
+\addbibresource{egbib.bib}
 
 % Include other packages here, before hyperref.
 
@@ -25,7 +31,7 @@
 \begin{document}
 
 %%%%%%%%% TITLE
-\title{Crowd Counting using fine tuning and density maps}
+\title{Crowd counting on fixed camera images}
 
 \author{Pierpaolo D'Odorico\\
 {\tt\small pierpaolo.dodorico@studenti.unipd.it}
@@ -39,15 +45,17 @@ Massimiliano Conte\\
 %\thispagestyle{empty}
 \begin{abstract}
 
-This paper aims to investigate which is the best approach for crowd counting in a simple situation, among different computer vision tecniques. The counting is performed on images captured from a security camera placed in a shopping mall. In this simple but useful task the goal is to estimate the number of people that are present in the image. We can for example count the percentage of visitors who buyed from a specific shop or report to the mall staff that covid-19 social distancing laws are not respected. ttt
+
+
+In this work we compared different computer vision tecniques in order to estimate the number of people in a frame. The counting is performed on images captured from a fixed camera placed in a shopping mall. Some applications of this kind of counting on a static view are security and safety tasks, estimating the number of visitors on a mall for a/b testing purpose, planning spaces and services or verify compliance with covid-19 social distancing.
 
 \end{abstract}
 
 %%%%%%%%% BODY TEXT
 \section{Introduction}
 
-Crowd counting has been a challenge in recent years. The goal of this task is directly connected with crowd control and public safety. The affluence of people in different areas can be also useful for planning spaces and services. For example in our specific task we need to count people from seurity camera images in a mall, and this people counting can be useful for several business and safety applications. 
-There were developed a lot of different tecniques for solving this computer vision task. Our idea is to compare two different tecniques and finding the best one for counting from single security camera images. The first approach is a convolutional neural network fine tuning on VGG16 network.  This very deep network was proposed by K. Simonyan and A. Zisserman from the University of Oxford and it was submitted to ImageNet challenge in 2014. The second approach deals with density maps. Those are useful in real life applications since the same number of people could have completely different crowd distributions. (as shown in Fig. 1). After implementing the two approaches on our problem we found that...
+The crowd counting problem received a lot of attention in recent years, due to its direct connection with crowd control and public safety. For this reason many techniques were recently proposed.
+Our idea is to compare two main tecniques in this fixed camera setting, one that is fast to implement and the other one more challenging, in order to verify if it is worth it to spend time for a more sophisticated solution. The first approach is to direcly estimate the number of people performing regression with a convolutional neural network, such as the VGG16 network \cite{simonyan2014very}.  This very deep network was proposed by K. Simonyan and A. Zisserman from the University of Oxford and it was submitted to ImageNet challenge in 2014. The second approach deals with density maps. Those are useful in real life applications since the same number of people could have completely different crowd distributions. (as shown in Fig. 1). After implementing the two approaches on our problem we found that...
 
 
 %------------------------------------------------------------------------
@@ -154,9 +162,9 @@ the line width as in the example below
 \end{verbatim}
 }
 
-{\small
-\bibliographystyle{ieee_fullname}
-\bibliography{egbib}
-}
+%{\small
+%\bibliographystyle{ieee_fullname}
+%\bibliography{egbib}
+%}
 
 \end{document}
