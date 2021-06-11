@@ -57,7 +57,7 @@ In this work we compared different computer vision tecniques in order to estimat
 \section{Introduction}
 
 The crowd counting problem received a lot of attention in recent years, due to its direct connection with crowd control and public safety. For this reason many techniques were recently proposed.
-Our idea is to compare two main tecniques in this fixed camera setting, one that is fast to implement and the other one more challenging, in order to verify if it is worth it to spend time for a more sophisticated solution. The first approach is to direcly estimate the number of people performing regression with a deep convolutional neural network, such as the VGG16 network \cite{simonyan2014very}. We chose this very deep network since it is easy to handle for our purposes, unlike more complex architectures that have, for example, skip layer connections, and also because it is the base for the second technique. The second approach performs an undirect estimate of the number of people. First it is estimated the density of people in the image, then starting from the obtained density map the count is inferred. This second approach represents the base idea for the state of the art methods in croud counting, where images could have a completely different number of people on  differents enviroment and perspective. After implementing the two approaches on our problem, we found that a simple regression based on neural networks could perform as good as density based approach, probably exploiting the fixed background and because density estimation methods are well suited for dense datasets.
+Our idea is to compare two main tecniques in this fixed camera setting, one that is fast to implement and the other one more challenging, in order to verify if it is worth spending time for a more sophisticated solution. The first approach is to direcly estimate the number of people performing regression with a deep convolutional neural network, such as the VGG16 network \cite{simonyan2014very}. We chose this very deep network since it is easy to handle for our purposes, unlike more complex architectures that have, for example, skip layer connections, and also because it is the base for the second technique. The second approach performs an undirect estimate of the number of people. First it is estimated the density of people in the image, then starting from the obtained density map the count is inferred. This second approach represents the base idea for the state of the art methods in croud counting, where images could have a completely different number of people on  differents enviroment and perspective. After implementing the two approaches on our problem, we found that a simple regression based on neural networks could perform as good as density based approach, probably exploiting the fixed background and because density estimation methods are well suited for dense datasets.
 
 
 %------------------------------------------------------------------------
@@ -137,13 +137,19 @@ As suggested in \cite{zhang2016single}, we used $\beta = 0.3$.
 	\label{fig:DensityGT}
 \end{figure}
 \subsubsection{CSRnet training}
-Our goal is to use this model on the \textit{Mall dataset}, but we don't have annotation for those images. So we used \textit{Shanghai-Tech} Part B dataset in order to pretrain the model. The first step was to build the architecture as described in \cite{li2018csrnet}, in particular the one that performed the best in their experiments (Figure \ref{fig:CSRnet}). We froze all the \textit{VGG16} layers, with \textit{ImageNet} pretrained weights, and train the other layers using SGD as described in \cite{li2018csrnet}. Then we fine tuned the whole neural network by train it again having unfrozen all the parameters, so we let the \textit{VGG16} layers to adapt their filters in order to catch features that are more relevant for the crowd counting task. We checked the performance of the network by making predictions and evaluatng them using \textit{Mean Absolut Error}.
+Our goal is to use this model on the \textit{Mall dataset}, but we don't have annotation for those images. So we used \textit{Shanghai-Tech} Part B dataset in order to pretrain the model. The first step was to build the architecture as described in \cite{li2018csrnet}, in particular the one that performed the best in their experiments (Figure \ref{fig:CSRnet}). We froze all the \textit{VGG16} layers, with \textit{ImageNet} pretrained weights, and train the other layers using SGD as described in \cite{li2018csrnet}, using \textit{Mean Squared Error} pixel by pixel as loss function for the reconstruction of the density map.
+
+\begin{equation}
+	MSE = \frac{1}{m}  \sum_{i = 1}^{m} \sum_{x \in X^{(i)}} (\hat{F}^{(i)}(x) - F^{(i)}(x))^2 \label{eq:MAE}
+\end{equation}
+Where $F^{(i)}$ is the $i$-th ground truth density map and $\hat{F}^{(i)}$ the estimation done by the model.\\
+ Then we fine tuned the whole neural network by train it again having unfrozen all the parameters, so we let the \textit{VGG16} layers to adapt their filters in order to catch features that are more relevant for the crowd counting task. We checked the performance of the network by making predictions and evaluatng them using \textit{Mean Absolut Error}.
 \begin{equation}
 	\hat{y}^{(i)} = \sum_{x \in X^{(i)}}\hat{F}^{(i)}(x)
 \end{equation}
 Basically the prediction is the sum over each pixel of the estimated density map.
 \begin{equation}
-	MAE = \frac{1}{m}  \sum_{i = 1}^{m} |\hat{y}^{(i)} - y^{(i)}|
+	MAE = \frac{1}{m}  \sum_{i = 1}^{m} |\hat{y}^{(i)} - y^{(i)}|\label{eq:MAE}
 \end{equation}
 Since \textit{VGG16} has 3 max pooling layers (Figure \ref{fig:vgg16}), we built the ground truth density maps such that its dimension would be $1/8$ of the original images, in order to make the predictions match the ground truth values.
 
@@ -156,18 +162,100 @@ Since \textit{VGG16} has 3 max pooling layers (Figure \ref{fig:vgg16}), we built
 
 As we can see from Figure \ref{fig:DMpred}, the estimation of the density maps provided by the trained \textit{CSRnet} model seem reasonable.
 \subsubsection{More layers}
-Once we had the \textit{CSRnet} trained on \textit{Shanghai-Tech} Part B dataset we adapt this model to the \textit{Mall dataset} in order to let it exploit the static background and the fixed perspective. The first thing we have done is to fine tune the whole network on the \textit{Mall dataset}. After this, since the results were worst than the simpler approach, we decided to use the fine tuned \textit{CSRnet} as feature extractor and to build on top of it a regressor. So we froze all the \textit{CSRnet} weights and added some dense layers (we experimented different configurations that will be explained in the next section), and that we trained the regressor using adam. We could add dense layers since images on \textit{Mall dataset} have fixed size. 
+Once we had the \textit{CSRnet} trained on \textit{Shanghai-Tech} Part B dataset we adapt this model to the \textit{Mall dataset} in order to let it exploit the static background and the fixed perspective. We decided to use the fine tuned \textit{CSRnet} as feature extractor and to build on top of it a regressor that estimates the number of people instead of integrating the density map. So we froze all the \textit{CSRnet} weights and added some dense layers (we experimented different configurations that will be explained in the next section), and that we trained the regressor with \textit{Adam}, using as loss function the \textit{MAE} on the prediction of the number of people. We could add dense layers since images on \textit{Mall dataset} have fixed size. Then we also tried to fine tune the whole network.
 \section{Experiments}
+In this section we describe the experiments we run in each stage, and what's the best configuration that we found.
 \subsection{Regression based approach}
 \subsection{Density based approach}
 \subsubsection{Shanghai Tech Part B}
+During the different phases of the \textit{CSRnet} model training we checked the performances on \textit{Shanghai-Tech} Part B dataset and on the unseen \textit{Mall dataset}, in order to check whatever the model can be used for the specific unseen dataset.
+We report the \textit{MAE} (Equation \eqref{eq:MAE}) computed on the test sets.
+\begin{table}[h!]
+	\begin{center}
+		\resizebox{\columnwidth}{!}{
+			\begin{tabular}{|c|c|c|}
+				\hline
+				CRSnet training procedure & \textit{Shanghai-Tech} Part B MAE & \textit{Mall dataset} MAE\\
+				\hline\hline
+								
+				
+				\text{VGG16} pre trained &&\\
+				layers frozen and  & 40.17 & 14.34 \\
+				SGD on the new layers &&\\
+				
+				\hline
+				Full previous trained &&\\
+				neural network fine tuned & 28.35 & 12.63 \\
+				using SGD &&\\
+				\hline
+		\end{tabular}}
+	\end{center}
+	\caption{CSRnet results.}
+	\label{CSRnetB}
+\end{table}
+\\
+In order to evaluate the capabilities of the model on the \textit{Mall dataset} we need to know how a dummy regressor performs. Since we are using \textit{MAE}, the best dummy regressor with respect to this metric is the median. A dummy regressor that always predicts the median has a \textit{MAE} of around 6. So the \textit{CSRnet} is performing very badly, and it needs to adapt to the specific characteristic of the dataset.
+	
+
+
+
+
 \subsubsection{Mall dataset}
+In this section we performed several experiments starting for \textit{CSRnet}. The reconstructions seem good (Figure \ref{fig:DMpred}), but the results on this dataset are bad. We started experimenting different network architectures for the new layers, we tried to use techniques such as dropout, resizing the starting images and we tried both the previous learned weights as feature extractor and to fine tune the whole architecture.
 
+\begin{table}[h!]
+	\begin{center}
+		\resizebox{\columnwidth}{!}{
+			\begin{tabular}{|c|c|c|}
+				\hline
+				Architecture & Training procedure & \textit{Mall dataset} MAE\\
+				\hline\hline
+				
+				1 dense layer & Adam on full network & 5.35 \\
+				\hline
+				
+				1 dense layer & \textit{CSRnet} frozen + Adam & 2.48 \\
+				\hline
+				
+				2 dense layers & \textit{CSRnet} frozen + Adam & 2.50 \\
+				\hline
+				
+				
+				224x224 images rehape & \textit{CSRnet} frozen + Adam & 2.6 \\
+				+ 1 dense layer&&\\
+				\hline
+				
+				224x224 images rehape & \textit{CSRnet} frozen + Adam & 2.56 \\
+				+ 2 dense layer&&\\
+				\hline
+				
+				1 dense layer & \textit{CSRnet} frozen + Adam & 2.44 \\
+				+ Dropout(0.1)&&\\
+				\hline
+				
+				2 dense layers & \textit{CSRnet} frozen + Adam & 2.43 \\
+				+ Dropout(0.1)&&\\
+				\hline
+				
+				1 dense layer & \textit{CSRnet} frozen + Adam & 2.51 \\
+				+ Dropout(0.4)&&\\
+				\hline
+				
+				2 dense layers & \textit{CSRnet} frozen + Adam & 2.65 \\
+				+ Dropout(0.4)&&\\
+				\hline
+				
+		\end{tabular}}
+	\end{center}
+	\caption{Results on \textit{Mall dataset}.\\ 1 dense layer: 1 unit - relu activation;\\ 2 dense layers: 1024 units - relu, 1 unit - relu;\\Dropout is placed before each dense layer.}
+	\label{CSRnetMALL}
+\end{table}
+From Table \ref{CSRnetMALL} we can see how fine tuning the whole net does not work in this case.
+Having 2 dense layers perform slightly better, but it takes longer to train. Dropout is useful but too much bring distortion to the estimator.
+We tried also SGD but we didn't see significant differences. 
 
-
-
-
-
+\section{Conclusion}
+The best model we found is bla, with a \textit{MAE} of bla99. In such a fixed scenario does not help to use density maps approach, those methods are good on very dense images and performs similarly to simpler approaches on this setting, but they are harder to train, so it is not worth using them.
 
 \printbibliography
 
