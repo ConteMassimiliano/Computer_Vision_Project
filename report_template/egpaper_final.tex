@@ -140,7 +140,7 @@ images of Part A are used for training and the remaining 182 images for testing,
 
 \subsubsection{VGG16 images preprocessing}
 
-In this first approach we want to directly estimate the number of people performing a regression using pre trained VGG16 deep convolutional neural network \cite{simonyan2014very} as a feature extractor on \textit{Mall dataset} images. Our idea is to keep the \textit{ImageNet} learned weights freezed and to use them as a feature extractor for imeges. An important part of this approach is the image preprocessing. For reaching good results from pre trained VGG16 weights we need to preprocess \textit{Mall dataset} images in the same way \textit{ImageNet} images were processed before VGG16 network training. For this reason we started resizing the images in a squared 112 x 112 shape. In original VGG16 network images have a squared 224 x 224 shape, but we start from a halved height and halved width for faster training in our experiments. Then we will compare the best regression based approach models with \textit{Mall dataset} images reshaped in 224 x 224 pixels for a more accurate result. In preprocessing we also convert the images from RGB to BGR, then we zero-center each color channel with respect to the \textit{ImageNet} dataset without scaling (Fig.\ref{fig:preprocess}). The result are squared images were peoples and objects in pictures are highlighted and the mall floor became white.
+In this first approach we want to directly estimate the number of people performing a regression using pre trained VGG16 deep convolutional neural network \cite{simonyan2014very} as a feature extractor on \textit{Mall dataset} images. Our idea is to keep the \textit{ImageNet} learned weights freezed and to use them as a feature extractor for imeges. An important part of this approach is the image preprocessing. For reaching good results from pre trained VGG16 weights we need to preprocess \textit{Mall dataset} images in the same way \textit{ImageNet} images were processed before VGG16 network training. For this reason we started resizing the images in a squared 112 x 112 shape. In original VGG16 network images have a squared 224 x 224 shape, but we start from a halved height and halved width for faster training in our experiments. Then we will compare the best regression based approach models with \textit{Mall dataset} images reshaped in 224 x 224 pixels for a more accurate result. In preprocessing we also convert the images from RGB to BGR, then we zero-center each color channel with respect to the \textit{ImageNet} dataset without scaling (Fig.\ref{fig:preprocess}). The result are squared images were people and objects in pictures are highlighted and the mall floor became white.
 
 \begin{figure}[h!]%
 	\includegraphics[width=0.9\columnwidth]{pics/preprocess.png}
@@ -208,7 +208,7 @@ In this section we describe the experiments we run in each stage, and what's the
 
 \subsection{Regression based approach}
 
-In this section of the report we report the results of the experiments we performed with the simple regression based approach. In this way we are able to reach the best hyperparameter configuration for the trainable part of the network. We will evaluate the models with \textit{MAE} metric (Equation \eqref{eq:MAE}) computed on test set. We start comparing some models trained and evaluated on 122 x 122 pixel images. With this image reshape trick we are able to perform more experiments and to find a good hyperparameter tuning.
+In this section of the report we report the results of the experiments we performed with the simple regression based approach. In this way we are able to reach the best hyperparameter configuration for the trainable part of the network. We will evaluate the models with \textit{MAE} metric (Equation \eqref{eq:MAE}) computed on test set. We start comparing some models trained and evaluated on 112 x 112 pixel images. With this image reshape trick we are able to perform more experiments and to find a good hyperparameter tuning.
 
 \begin{table}[h!]
 	\begin{center}
@@ -362,10 +362,10 @@ Having 2 dense layers perform slightly better, but it takes longer to train. Dro
 We tried also SGD but we didn't see significant differences. 
 
 \section{Conclusion}
-The best model we found is the 2 dense layer with dropout rate 0.2 trained on CSRnet frozen, with a \textit{MAE} of $2.43$. But the simplest approach of using a freezed VGG16 with a single dense regressor and dropout rate 0.1 performes a $2.53$ \textit{MAE}. In real world applications is hard to notice the prediction difference of the two models. Having a model that is able to count humans from images from a security camera with a Mean Absolute Error of 2.5 people can be useful for many applications. In such a fixed scenario does not help to use density maps approach, those methods are good on very dense images and performs similarly to simpler approaches on this setting, but they are harder to train, so it is not worth using them. For further developments purposes we can print some images with real human count and prediction (Fig.\ref{fig:worst}, \ref{fig:best} and \ref{fig:worstplus}). 
+The best model we found is the 2 dense layer with dropout rate 0.2 trained on CSRnet frozen, with a \textit{MAE} of $2.43$. But the simplest approach of using a freezed VGG16 with a single dense regressor and dropout rate $0.3$ performes a $2.53$ \textit{MAE}. In real world applications is hard to notice the prediction difference of the two models. Having a model that is able to count humans from images from a security camera with a Mean Absolute Error of $2.5$ people can be useful for many applications. In such a fixed scenario does not help to use density maps approach, those methods are good on very dense images and performs similarly to simpler approaches on this setting, but they are harder to train, so it is not worth using them. For further developments purposes we can print some images with real human count and prediction (Fig.\ref{fig:worst}, \ref{fig:best} and \ref{fig:worstplus}). 
 
 \begin{figure}[h!]%
-	\includegraphics[width=1\columnwidth]{pics/perfect.png}
+	\includegraphics[width=1\columnwidth]{pics/low.png}
 	\centering
 	\caption{Mall dataset worst underestimated predictions.}
 	\centering
@@ -381,12 +381,21 @@ The best model we found is the 2 dense layer with dropout rate 0.2 trained on CS
 \end{figure}
 
 \begin{figure}[h!]%
-	\includegraphics[width=1\columnwidth]{pics/perfect.png}
+	\includegraphics[width=1\columnwidth]{pics/high.png}
 	\centering
 	\caption{Mall dataset worst overestimated predictions.}
 	\centering
 	\label{fig:worstplus}
 \end{figure}
+
+\begin{figure}[h!]%
+	\includegraphics[width=1\columnwidth]{pics/ditributions.png}
+	\centering
+	\caption{Ground Truth count vs Predictions distributions.}
+	\centering
+	\label{fig:distrib}
+\end{figure}
+
 
 \printbibliography
 %\bibliography{egbib.bib}
