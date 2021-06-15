@@ -362,7 +362,7 @@ Having 2 dense layers perform slightly better, but it takes longer to train. Dro
 We tried also SGD but we didn't see significant differences. 
 
 \section{Conclusion}
-The best model we found is the 2 dense layer with dropout rate 0.2 trained on CSRnet frozen, with a \textit{MAE} of $2.43$. But the simplest approach of using a frozen VGG16 with a single dense regressor and dropout rate $0.3$ performes a $2.53$ \textit{MAE}. In real world applications is hard to notice the prediction difference of the two models. Having a model that is able to count humans from images from a security camera with a Mean Absolute Error of $2.5$ people can be useful for many applications. In such a fixed scenario does not help to use a density maps approach, those methods are good on very dense images and performs similarly to simpler approaches on this setting, but they are harder to train, so it is not worth using them. We printed some test images with real human count and its prediction, in particulare the best and the worst ones (Fig.\ref{fig:worst}, \ref{fig:best} and \ref{fig:worstplus}), but we did't notice visible factors that made the prediction good or bad. 
+The best model we found is the 2 dense layer with dropout rate 0.2 trained on CSRnet frozen, with a \textit{MAE} of $2.43$. But the simplest approach of using a frozen VGG16 with a single dense regressor and dropout rate $0.3$ performes a $2.53$ \textit{MAE}. In real world applications is hard to notice the prediction difference of the two models. Having a model that is able to count humans from images from a security camera with a Mean Absolute Error of $2.5$ people can be useful for many applications. In such a fixed scenario does not help to use a density maps approach, those methods are good on very dense images and performs similarly to simpler approaches on this setting, but they are harder to train, so it is not worth using them. We printed some test images with real human count and its prediction, in particular the best and the worst ones (Fig.\ref{fig:worst}, \ref{fig:best} and \ref{fig:worstplus}), but we did't notice visible factors that made the prediction good or bad. 
 
 \begin{figure}[h!]%
 	\includegraphics[width=1\columnwidth]{pics/low.png}
@@ -395,8 +395,8 @@ We have also done some model diagnosis (Fig.\ref{fig:distrib}), and we figured o
 	\caption{Ground Truth count vs Predictions distributions.}
 	\centering
 	\label{fig:distrib}
-\end{figure}
-
+\end{figure}\\
+If you are interested, you can find all the code we wrote for this work here: \href{https://github.com/ConteMassimiliano/Computer_Vision_Project}{GitHub link}.
 
 \printbibliography
 %\bibliography{egbib.bib}
